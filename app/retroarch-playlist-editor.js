@@ -1140,6 +1140,15 @@ addEvent(window,'load',function(){
 		el('input-playlist-name').value=currentPlaylist.name;
 		el('input-playlist-name').focus();
 	});
+	addEvent(el('button-toolbar-remove-duplicates'), 'click', function(evt){
+		if(confirm("Remove all duplicates? \n\nThis will keep the first instance of any entry that has duplicate names. This affects all entries in the playlist, not just those selected.")) {
+			currentPlaylist.dataTable.setData(
+				currentPlaylist.dataTable._data.filter((item, index, self) =>
+					self.findIndex(t => t.name === item.name) === index
+				)
+			);
+		}
+	});
 	addEvent(el('button-toolbar-edit'), 'click', function(evt){
 		UI.automaticEditBalloon=!UI.isBalloonOpen('edit');
 		if(!UI.automaticEditBalloon)
@@ -1636,6 +1645,13 @@ var MASSIVE_RENAME=[
 				.replace(/ \((v\d\.\d|Rev .*?)\)/, '')
 				.replace(/ \((No )?EDC\)/, '')
 				.replace(/ \[\!\]/, '')
+			;
+		}
+	},{
+		label:'Remove all tags',
+		filter:function(content){
+			return content.name
+				.replace(/ \(((.*?, )+)?.+((, .*?)+)?\)/, '')
 			;
 		}
 	}/*,{
